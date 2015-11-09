@@ -8,28 +8,12 @@ header ('Content-type: text/html; charset=UTF-8');
 */
 $serverLocation = 0;
 
-$host;
-$db;
-$user;
-$passwd;
+$host = 'localhost';
+$db = 'history_app';
+$user = 'root';
+$passwd = '';
 
-if($serverLocation == 0){
-	$host = 'localhost';
-	$db = 'history_app';
-	$user = 'root';
-	$passwd = '';
 
-} else if($serverLocation == 1){
-	$host = 'localhost';
-	$db = 'quebragalho';
-	$user = 'quebragalho_user';
-	$passwd = '@#RJQUEBRAgalho@#UFAM@#2015';
-} else if($serverLocation == 2){
-	$host = 'mysql.hostinger.com.br';
-	$db = 'u992178256_qg';
-	$user = 'u992178256_qg';
-	$passwd = 'shellscript';
-}
 
 $conn = new mysqli($host,$user,$passwd,$db);
 
