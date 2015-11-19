@@ -131,23 +131,28 @@ if(isset($_POST['method'])){
 		$query = $_POST['data'];
 		$array_response = array();
 
-		$sql = "select *, place.id as id_place
-						, place.name as name_place
-						, district.name as name_district
-				        , city.name as name_city
-				        , country.name as name_country
-				        from place join district on (place.id_district = district.id) 
-									join city on (district.id_city = city.id)
-				                    join state on (city.id_state = state.id)
-				                    join country on (state.id_country = country.id)
-						where place.name like '%$query%' or
-								place.description like '%$query%' or
-				                place.addr like '%$query%' or
-				                place.name like '%$query%' or
-				                district.name like '%$query%' or
-				                city.name like '%$query%' or
-				                state.name like '%$query%' or
-				                country.name like '%$query%';";
+		$sql = "select place.*
+        , district.name as name_district
+        , category.name as name_category
+        , state.id as id_state
+        , state.name as name_state
+        , city.id as id_city
+        , city.name as name_city
+        , country.id as id_country
+        , country.name as name_country
+        from place join district on (place.id_district = district.id) 
+					join city on (district.id_city = city.id)
+                    join state on (city.id_state = state.id)
+                    join country on (state.id_country = country.id)
+                    join category on (place.id_category = category.id)
+		where place.name like '%$query%' or
+				place.description like '%$query%' or
+                place.addr like '%$query%' or
+                place.name like '%$query%' or
+                district.name like '%$query%' or
+                city.name like '%$query%' or
+                state.name like '%$query%' or
+                country.name like '%$query%'";
 
 		$result = $conn->query($sql);
 
