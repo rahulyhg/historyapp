@@ -1,5 +1,6 @@
 <?php 
-header ('Content-type: text/html; charset=UTF-8');
+//header ('Content-type: text/html; charset=UTF-8');
+header('Content-Type', 'application/json;charset=utf-8');
 
 /*
 * @ localhost = 0;
@@ -53,7 +54,7 @@ if(isset($_POST['method'])){
 	//retorna json array
 	if(strcmp('list_cats', $_POST['method']) == 0){
 
-		$dados = $_POST['data'];
+		
 		$array_response = array();
 
 		$sql = "select * from category";
@@ -81,7 +82,21 @@ if(isset($_POST['method'])){
 		$id_cat = $_POST['data'];
 		$array_response = array();
 
-		$sql = "select * from place where id_category = $id_cat";
+		$sql = "select place.*
+        , district.name as name_district
+        , category.name as name_category
+        , state.id as id_state
+        , state.name as name_state
+        , city.id as id_city
+        , city.name as name_city
+        , country.id as id_country
+        , country.name as name_country
+        from place join district on (place.id_district = district.id) 
+					join city on (district.id_city = city.id)
+                    join state on (city.id_state = state.id)
+                    join country on (state.id_country = country.id)
+                    join category on (place.id_category = category.id)
+		where place.id_category = $id_cat";
 
 		$result = $conn->query($sql);
 
@@ -106,7 +121,21 @@ if(isset($_POST['method'])){
 		$id_place = $_POST['data'];
 		$array_response = array();
 
-		$sql = "select * from place where id = $id_place";
+		$sql = "select place.*
+        , district.name as name_district
+        , category.name as name_category
+        , state.id as id_state
+        , state.name as name_state
+        , city.id as id_city
+        , city.name as name_city
+        , country.id as id_country
+        , country.name as name_country
+        from place join district on (place.id_district = district.id) 
+					join city on (district.id_city = city.id)
+                    join state on (city.id_state = state.id)
+                    join country on (state.id_country = country.id)
+                    join category on (place.id_category = category.id)
+		where place.id = $id_place";
 
 		$result = $conn->query($sql);
 
@@ -171,8 +200,20 @@ if(isset($_POST['method'])){
 		echo json_encode($array_response);
 	}
 
+	//retorna json object
+	else if(strcmp('set-favorite', $_POST['method']) == 0){
+		
+		$id_place = $_POST['data'];
+		$array_response = array();
+
+		//teu codigo
+		
+		$array_response = array("id"=>"merro");
+		echo json_encode($array_response);
+	}
+
 	else{		
-		$array_response = array("response"=>"metodo_desconhecido");
+		$array_response = array("id"=>"metodo_desconhecido");
 		echo json_encode($array_response);
 	}
 
