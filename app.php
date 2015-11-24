@@ -65,6 +65,18 @@ $app->post('/place/getbycat', function () {
 	}
 });
 
+$app->post('/place/find', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$param = json_decode($_POST["json"]);
+	$placeDAO = new Place();
+	$result = $placeDAO->find($param);
+	if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array(array("id"=>"not_found")));
+	}
+});
+
 
 
 

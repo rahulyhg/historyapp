@@ -54,7 +54,33 @@ class Place{
 		where place.id_category = $param->id_cat");
 		
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
-				
 	}
 	
+	function find($param){
+		//$conn = DB::getConn();
+		$stmt = DB::getConn()->query("select place.*
+        , district.name as name_district
+        , category.name as name_category
+        , state.id as id_state
+        , state.name as name_state
+        , city.id as id_city
+        , city.name as name_city
+        , country.id as id_country
+        , country.name as name_country
+        from place join district on (place.id_district = district.id) 
+					join city on (district.id_city = city.id)
+                    join state on (city.id_state = state.id)
+                    join country on (state.id_country = country.id)
+                    join category on (place.id_category = category.id)
+		where place.name like '%$param->query%' or
+				place.description like '%param->query%' or
+                place.addr like '%$param->query%' or
+                place.name like '%$param->query%' or
+                district.name like '%$param->query%' or
+                city.name like '%$param->query%' or
+                state.name like '%$param->query%' or
+                country.name like '%$param->query%'");
+		
+		return $stmt->fetchAll(PDO::FETCH_OBJ);
+	}
 }
