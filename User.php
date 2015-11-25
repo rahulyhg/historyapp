@@ -31,4 +31,9 @@ class User{
 		$stmt->bindParam("id",$user->id);
 		$stmt->execute();
 	}
+
+	function login($user){
+		$stmt = DB::getConn()->query("SELECT id,name,email,picture_profile FROM user WHERE email = '$user->user' and passwd = '$user->passwd'");
+		return $stmt->fetchAll(PDO::FETCH_OBJ);;
+	}
 }

@@ -50,12 +50,8 @@ $app->post('/category/delete', function () {
 
 
 $app->post('/place/getbycat', function () {
-	//var_dump($_POST);
 	$request = \Slim\Slim::getInstance()->request();
-	//var_dump($request);
-	//$param = json_decode($request->getBody());
 	$param = json_decode($_POST["json"]);
-	//print_r($param);
 	$placeDAO = new Place();
 	$result = $placeDAO->getbycat($param);
 	if(sizeof($result)>0){
@@ -75,6 +71,60 @@ $app->post('/place/find', function () {
 	}else{
 		echo json_encode(array(array("id"=>"not_found")));
 	}
+});
+
+
+$app->post('/user/login', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	//$user = json_decode($request->getBody());
+	$user = json_decode($_POST["json"]);
+	$userDAO = new User();
+	$result = $userDAO->login($user);
+	if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array(array("id"=>"not_found")));
+	}
+});
+
+
+
+
+
+
+
+
+
+
+
+$app->get('/user', function () {
+	$userDAO = new User();
+	$result = $userDAO->get();
+	echo json_encode($result);
+});
+
+$app->post('/user', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$user = json_decode($request->getBody());
+	$userDAO = new User();
+	$userDAO->insert($user);
+	echo '{"result":"ok"}';
+});
+
+$app->put('/user', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$user = json_decode($request->getBody());
+	$userDAO = new User();
+	$userDAO->update($user);
+	echo '{"result":"ok"}';
+});
+
+$app->delete('/user', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$user = json_decode($request->getBody());
+	$userDAO = new User();
+	$userDAO->delete($user);
+	echo '{"result":"ok"}';
 });
 
 
@@ -391,34 +441,6 @@ $app->delete('/state', function () {
 	echo '{"result":"ok"}';
 });
 
-$app->get('/user', function () {
-	$userDAO = new User();
-	$result = $userDAO->get();
-	echo json_encode($result);
-});
 
-$app->post('/user', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$user = json_decode($request->getBody());
-	$userDAO = new User();
-	$userDAO->insert($user);
-	echo '{"result":"ok"}';
-});
-
-$app->put('/user', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$user = json_decode($request->getBody());
-	$userDAO = new User();
-	$userDAO->update($user);
-	echo '{"result":"ok"}';
-});
-
-$app->delete('/user', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$user = json_decode($request->getBody());
-	$userDAO = new User();
-	$userDAO->delete($user);
-	echo '{"result":"ok"}';
-});
 
 $app->run();
