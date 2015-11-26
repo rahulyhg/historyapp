@@ -88,6 +88,73 @@ $app->post('/user/login', function () {
 });
 
 
+$app->post('/favorite/mark', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$favorite = json_decode($_POST["json"]);
+	$favoriteDAO = new Favorite();
+	$result = $favoriteDAO->mark($favorite);
+	echo json_encode(array("id"=>$result));
+});
+
+$app->post('/favorite/unmark', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$favorite = json_decode($_POST["json"]);
+	$favoriteDAO = new Favorite();
+	$result = $favoriteDAO->unmark($favorite);
+	echo json_encode(array("id"=>$result));
+});
+
+$app->post('/favorite/check', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$favorite = json_decode($_POST["json"]);
+	$favoriteDAO = new Favorite();
+	$result = $favoriteDAO->check($favorite);
+	if(sizeof($result)>0){
+		echo json_encode(array("id"=>"true"));
+	}else{
+		echo json_encode(array("id"=>"false"));
+	}
+});
+
+
+
+
+
+
+
+$app->get('/favorite', function () {
+	$favoriteDAO = new Favorite();
+	$result = $favoriteDAO->get();
+	echo json_encode($result);
+});
+
+$app->post('/favorite', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$favorite = json_decode($request->getBody());
+	$favoriteDAO = new Favorite();
+	$favoriteDAO->insert($favorite);
+	echo '{"result":"ok"}';
+});
+
+$app->put('/favorite', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$favorite = json_decode($request->getBody());
+	$favoriteDAO = new Favorite();
+	$favoriteDAO->update($favorite);
+	echo '{"result":"ok"}';
+});
+
+$app->delete('/favorite', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$favorite = json_decode($request->getBody());
+	$favoriteDAO = new Favorite();
+	$favoriteDAO->delete($favorite);
+	echo '{"result":"ok"}';
+});
+
+
+
+
 
 
 
@@ -259,35 +326,7 @@ $app->delete('/district', function () {
 	echo '{"result":"ok"}';
 });
 
-$app->get('/favorite', function () {
-	$favoriteDAO = new Favorite();
-	$result = $favoriteDAO->get();
-	echo json_encode($result);
-});
 
-$app->post('/favorite', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$favorite = json_decode($request->getBody());
-	$favoriteDAO = new Favorite();
-	$favoriteDAO->insert($favorite);
-	echo '{"result":"ok"}';
-});
-
-$app->put('/favorite', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$favorite = json_decode($request->getBody());
-	$favoriteDAO = new Favorite();
-	$favoriteDAO->update($favorite);
-	echo '{"result":"ok"}';
-});
-
-$app->delete('/favorite', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$favorite = json_decode($request->getBody());
-	$favoriteDAO = new Favorite();
-	$favoriteDAO->delete($favorite);
-	echo '{"result":"ok"}';
-});
 
 $app->get('/picture', function () {
 	$pictureDAO = new Picture();
