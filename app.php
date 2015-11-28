@@ -117,6 +117,36 @@ $app->post('/favorite/check', function () {
 });
 
 
+$app->post('/rating/get', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$rating = json_decode($_POST["json"]);
+	$ratingDAO = new Rating();
+	$result = $ratingDAO->get($rating);
+	if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array("id"=>"false"));
+	}
+});
+
+$app->post('/rating/set', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$rating = json_decode($_POST["json"]);
+	$ratingDAO = new Rating();
+	$result = $ratingDAO->set($rating);
+	echo json_encode(array("id"=>$result));
+});
+
+
+$app->post('/rating/update', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$rating = json_decode($_POST["json"]);
+	$ratingDAO = new Rating();
+	$result = $ratingDAO->update($rating);
+	echo json_encode(array("id"=>$result));
+});
+
+
 
 
 
