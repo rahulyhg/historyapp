@@ -146,6 +146,59 @@ $app->post('/rating/update', function () {
 	echo json_encode(array("id"=>$result));
 });
 
+$app->post('/rating/list', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$rating = json_decode($_POST["json"]);
+	$ratingDAO = new Rating();
+	$result = $ratingDAO->list_($rating);
+	if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array("id"=>"false"));
+	}
+});
+
+
+$app->get('/commentary', function () {
+	$commentaryDAO = new Commentary();
+	$result = $commentaryDAO->get();
+	echo json_encode($result);
+});
+
+$app->post('/commentary/list', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$commentary = json_decode($_POST["json"]);
+	$commentaryDAO = new Commentary();
+	$result = $commentaryDAO->list_($commentary);
+	if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array("id"=>"false"));
+	}
+});
+
+$app->put('/commentary', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$commentary = json_decode($request->getBody());
+	$commentaryDAO = new Commentary();
+	$commentaryDAO->update($commentary);
+	echo '{"result":"ok"}';
+});
+
+$app->delete('/commentary', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$commentary = json_decode($request->getBody());
+	$commentaryDAO = new Commentary();
+	$commentaryDAO->delete($commentary);
+	echo '{"result":"ok"}';
+});
+
+
+
+
+
+
+
 
 
 
@@ -266,35 +319,7 @@ $app->delete('/city', function () {
 	echo '{"result":"ok"}';
 });
 
-$app->get('/commentary', function () {
-	$commentaryDAO = new Commentary();
-	$result = $commentaryDAO->get();
-	echo json_encode($result);
-});
 
-$app->post('/commentary', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$commentary = json_decode($request->getBody());
-	$commentaryDAO = new Commentary();
-	$commentaryDAO->insert($commentary);
-	echo '{"result":"ok"}';
-});
-
-$app->put('/commentary', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$commentary = json_decode($request->getBody());
-	$commentaryDAO = new Commentary();
-	$commentaryDAO->update($commentary);
-	echo '{"result":"ok"}';
-});
-
-$app->delete('/commentary', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$commentary = json_decode($request->getBody());
-	$commentaryDAO = new Commentary();
-	$commentaryDAO->delete($commentary);
-	echo '{"result":"ok"}';
-});
 
 $app->get('/country', function () {
 	$countryDAO = new Country();

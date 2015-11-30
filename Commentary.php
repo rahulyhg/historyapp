@@ -27,4 +27,10 @@ class Commentary{
 		$stmt->bindParam("id",$commentary->id);
 		$stmt->execute();
 	}
+
+	function list_($commentary){
+		$stmt = DB::getConn()->query("SELECT `id`,`id_user`,`id_place`,`comment_text` FROM commentary WHERE id_place = '$commentary->id_place'");
+		$commentarys = $stmt->fetchAll(PDO::FETCH_OBJ);
+		return $commentarys;
+	}
 }

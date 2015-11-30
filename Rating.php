@@ -50,4 +50,18 @@ class Rating{
 		//$stmt->bindParam("id",$favorite->id);
 		return $stmt->execute();
 	}
+
+	function list_($rating){
+		$stmt = DB::getConn()->query("SELECT rating.id as id_rating,
+											 rating.id_place as id_place,
+											 rating.rating_value as rating_value,
+											 rating.rating_text as rating_text,
+											 user.id as id_user,
+											 user.name as name_user,
+											 user.email as email_user,
+											 date_format(rating.date_time,'%d/%m/%Y') as date_time
+											 FROM rating join user on(user.id = rating.id_user) WHERE id_place = '$rating->id_place'");
+		$ratings = $stmt->fetchAll(PDO::FETCH_OBJ);
+		return $ratings;
+	}
 }
