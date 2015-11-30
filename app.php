@@ -154,7 +154,7 @@ $app->post('/rating/list', function () {
 	if(sizeof($result)>0){
 		echo json_encode($result);
 	}else{
-		echo json_encode(array("id"=>"false"));
+		echo json_encode(array(array("id"=>"false")));
 	}
 });
 

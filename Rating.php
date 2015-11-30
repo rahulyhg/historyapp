@@ -59,7 +59,8 @@ class Rating{
 											 user.id as id_user,
 											 user.name as name_user,
 											 user.email as email_user,
-											 date_format(rating.date_time,'%d/%m/%Y') as date_time
+											 date_format(rating.date_time,'%d/%m/%Y') as date_time,
+											 user.picture_profile as picture_user
 											 FROM rating join user on(user.id = rating.id_user) WHERE id_place = '$rating->id_place'");
 		$ratings = $stmt->fetchAll(PDO::FETCH_OBJ);
 		return $ratings;
