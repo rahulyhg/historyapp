@@ -5,7 +5,7 @@ class Place{
 		$places = $stmt->fetchAll(PDO::FETCH_OBJ);
 		return $places;
 	}
-	function insert($place){
+	/*function insert($place){
 		$conn = DB::getConn();
 		$stmt = $conn->prepare("INSERT INTO place (`id`,`id_district`,`id_category`,`name`,`description`,`addr`,`location`,`picture_place`) VALUES (:id,:id_district,:id_category,:name,:description,:addr,:location,:picture_place)");
 		$stmt->bindParam("id",$place->id);
@@ -16,6 +16,65 @@ class Place{
 		$stmt->bindParam("addr",$place->addr);
 		$stmt->bindParam("location",$place->location);
 		$stmt->bindParam("picture_place",$place->picture_place);
+		$stmt->execute();
+	}*/
+	function insert($place){
+		$conn = DB::getConn();
+
+		$fileString = $place->picture;
+		$ext = $place->ext;
+		$now = date("D M j G:i:s T Y");
+		$filename = md5($place->name.$now);
+		$filename = $filename.".".$ext ;
+
+		$binary = base64_decode($fileString);
+	    header('Content-Type: bitmap; charset=utf-8');
+
+	    $aliasRootFolder = "/var/www/html/historyapp/web";
+
+	    $file = fopen($aliasRootFolder.'/images/__w-200-400-600-800-1000__/' . $filename, 'wb');
+	    // Create File
+	    fwrite($file, $binary);
+	    fclose($file);
+
+	    $file = fopen($aliasRootFolder.'/images/w200/' . $filename, 'wb');
+	    // Create File
+	    fwrite($file, $binary);
+	    fclose($file);
+
+	    $file = fopen($aliasRootFolder.'/images/w400/' . $filename, 'wb');
+	    // Create File
+	    fwrite($file, $binary);
+	    fclose($file);
+
+	    $file = fopen($aliasRootFolder.'/images/w600/' . $filename, 'wb');
+	    // Create File
+	    fwrite($file, $binary);
+	    fclose($file);
+
+	    $file = fopen($aliasRootFolder.'/images/w800/' . $filename, 'wb');
+	    // Create File
+	    fwrite($file, $binary);
+	    fclose($file);
+
+	    $file = fopen($aliasRootFolder.'/images/w1000/' . $filename, 'wb');
+	    // Create File
+	    fwrite($file, $binary);
+	    fclose($file);
+
+		$picture_place = $filename;
+
+		$stmt = $conn->prepare("INSERT INTO place 
+			(`id`,`id_district`,`id_category`,`name`,`description`,`addr`,`location`,`picture_place`) 
+			VALUES (NULL,
+					'$place->id_district',
+					'$place->id_category',
+					'$place->name',
+					'$place->description',
+					'$place->addr',
+					'$place->location',
+					'$picture_place')");
+		
 		$stmt->execute();
 	}
 	function update($place){

@@ -18,7 +18,7 @@ $app = new \Slim\Slim(array('debug' => true));
 $app->response()->header('Content-Type', 'application/json;charset=utf-8');
 
 
-$app->post('/category', function () {
+$app->get('/category', function () {
 	$categoryDAO = new Category();
 	$result = $categoryDAO->get();
 	echo json_encode($result);
@@ -71,6 +71,19 @@ $app->post('/place/find', function () {
 	}else{
 		echo json_encode(array(array("id"=>"not_found")));
 	}
+});
+
+$app->post('/place/create', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$param = json_decode($_POST["json"]);
+	$placeDAO = new Place();
+	$result = $placeDAO->insert($param);
+	echo '{"result":"ok"}';
+	/*if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array(array("id"=>"not_found")));
+	}*/
 });
 
 
