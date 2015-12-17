@@ -208,6 +208,36 @@ $app->delete('/commentary', function () {
 
 
 
+$app->post('/picture/getbyplace', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	//$picture = json_decode($request->getBody());
+	$picture = json_decode($_POST["json"]);
+	$pictureDAO = new Picture();
+	//$pictureDAO->getByPlace($picture);
+	//echo '{"result":"ok"}';
+	$result = $pictureDAO->getByPlace($picture);
+	if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array("id"=>"false"));
+	}
+});
+
+$app->post('/picture/send', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$param = json_decode($_POST["json"]);
+	$pictureDAO = new Picture();
+	$result = $pictureDAO->insert($param);
+	echo '{"result":"ok"}';
+	/*if(sizeof($result)>0){
+		echo json_encode($result);
+	}else{
+		echo json_encode(array(array("id"=>"not_found")));
+	}*/
+});
+
+
+
 
 
 
@@ -402,13 +432,7 @@ $app->get('/picture', function () {
 	echo json_encode($result);
 });
 
-$app->post('/picture', function () {
-	$request = \Slim\Slim::getInstance()->request();
-	$picture = json_decode($request->getBody());
-	$pictureDAO = new Picture();
-	$pictureDAO->insert($picture);
-	echo '{"result":"ok"}';
-});
+
 
 $app->put('/picture', function () {
 	$request = \Slim\Slim::getInstance()->request();
