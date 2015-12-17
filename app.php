@@ -216,11 +216,7 @@ $app->post('/picture/getbyplace', function () {
 	//$pictureDAO->getByPlace($picture);
 	//echo '{"result":"ok"}';
 	$result = $pictureDAO->getByPlace($picture);
-	if(sizeof($result)>0){
-		echo json_encode($result);
-	}else{
-		echo json_encode(array("id"=>"false"));
-	}
+	echo json_encode(array("pictures"=>$result));
 });
 
 $app->post('/picture/send', function () {
