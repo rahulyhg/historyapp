@@ -63,15 +63,31 @@ $app->post('/place/getbycat', function () {
 	}
 });
 
+$app->post('/place/getall', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$param = json_decode($_POST["json"]);
+	$placeDAO = new Place();
+	$result = $placeDAO->getall($param);
+	if(sizeof($result)>0){
+		$result["success"]=true;
+		echo json_encode($result);
+	}else{
+		$result["success"]=false;
+		echo json_encode($result);
+	}
+});
+
 $app->post('/place/find', function () {
 	$request = \Slim\Slim::getInstance()->request();
 	$param = json_decode($_POST["json"]);
 	$placeDAO = new Place();
 	$result = $placeDAO->find($param);
 	if(sizeof($result)>0){
+		$result["success"]=true;
 		echo json_encode($result);
 	}else{
-		echo json_encode(array(array("id"=>"not_found")));
+		$result["success"]=false;
+		echo json_encode($result);
 	}
 });
 
@@ -96,10 +112,11 @@ $app->post('/user/login', function () {
 	$userDAO = new User();
 	$result = $userDAO->login($user);
 	if(sizeof($result)>0){
-		echo json_encode($result);
+		$result["success"]=true;
 	}else{
-		echo json_encode(array(array("id"=>"not_found")));
+		$result["success"]=false;
 	}
+	echo json_encode($result);
 });
 
 
@@ -180,6 +197,26 @@ $app->get('/commentary', function () {
 	echo json_encode($result);
 });
 
+$app->post('/commentary/set', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$commentary = json_decode($_POST["json"]);
+	$commentaryDAO = new Commentary();
+	$commentaryDAO->insert($commentary);
+	$result = array();
+	$result["success"]=true;
+	echo json_encode($result);
+});
+
+$app->post('/commentary/delete', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$commentary = json_decode($_POST["json"]);
+	$commentaryDAO = new Commentary();
+	$commentaryDAO->delete($commentary);
+	$result = array();
+	$result["success"]=true;
+	echo json_encode($result);
+});
+
 $app->post('/commentary/list', function () {
 	$request = \Slim\Slim::getInstance()->request();
 	$commentary = json_decode($_POST["json"]);
@@ -190,6 +227,19 @@ $app->post('/commentary/list', function () {
 	}else{
 		echo json_encode(array("id"=>"false"));
 	}
+});
+
+$app->post('/commentary/getallbyplace', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	$commentary = json_decode($_POST["json"]);
+	$commentaryDAO = new Commentary();
+	$result = $commentaryDAO->listall($commentary);
+	if(sizeof($result)>0){
+		$result["success"]=true;
+	}else{
+		$result["success"]=false;
+	}
+	echo json_encode($result);
 });
 
 $app->put('/commentary', function () {

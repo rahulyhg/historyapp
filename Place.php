@@ -142,6 +142,7 @@ class Place{
 		
 		$places = array();
 		foreach ($tempPlaces as $place) {
+			$idPlace = $place["id"];
 			$idDistrict = $place["id_district"];
 			$idCategory = $place["id_category"];
 
@@ -178,11 +179,129 @@ class Place{
 
 			$country = $stmt->fetch(PDO::FETCH_ASSOC);
 
+			$stmt = DB::getConn()->query("select rating.*
+				        from rating 
+						where rating.id_place = $idPlace");
+
+			$temp_ratings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			$ratings = array();
+			foreach ($temp_ratings as $rating) {
+				$idUser = $rating["id_user"];
+				$stmt = DB::getConn()->query("select user.*
+				        from user 
+						where user.id = $idUser");
+
+				$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+				$rating["user"]=$user;
+				array_push($ratings, $rating);
+			}
+
 			$state["country"] = $country;
 			$city["state"] = $state;
 			$district["city"] = $city;
 			$place["district"] = $district;
 			$place["category"] = $category;
+			if(sizeof($ratings)>0){
+				$place["ratings"] = $ratings;	
+			}
+			
+			array_push($places, $place);
+		}
+		$array_response["places"] = $places;
+
+		return $array_response;
+	}
+
+	function getall($param){
+		$eath_radius_in_km = 6371;
+		$user_latitude = $param->user_latitude;
+		$user_longitude = $param->user_longitude;
+		$radius_in_km = $param->radius;
+
+		//$conn = DB::getConn();
+		$array_response = array();
+		$stmt = DB::getConn()->query("select place.*, ($eath_radius_in_km *
+			        acos(
+			            cos(radians($user_latitude)) *
+			            cos(radians(latitude)) *
+			            cos(radians($user_longitude) - radians(longitude)) +
+			            sin(radians($user_latitude)) *
+			            sin(radians(LATITUDE))
+			        )) AS distance
+        from place join category on (place.id_category = category.id)
+		HAVING distance <= $radius_in_km
+		ORDER BY distance ASC");
+		
+		$tempPlaces = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+		$places = array();
+		foreach ($tempPlaces as $place) {
+			$idPlace = $place["id"];
+			$idDistrict = $place["id_district"];
+			$idCategory = $place["id_category"];
+
+			$stmt = DB::getConn()->query("select category.*
+				        from category 
+						where category.id = $idCategory");
+
+			$category = $stmt->fetch(PDO::FETCH_ASSOC);
+			
+			$stmt = DB::getConn()->query("select district.*
+				        from district 
+						where district.id = $idDistrict");
+
+			$district = $stmt->fetch(PDO::FETCH_ASSOC);
+			$idCity = $district["id_city"];
+
+			$stmt = DB::getConn()->query("select city.*
+				        from city 
+						where city.id = $idCity");
+
+			$city = $stmt->fetch(PDO::FETCH_ASSOC);
+			$idState = $city["id_state"];
+
+			$stmt = DB::getConn()->query("select state.*
+				        from state 
+						where state.id = $idState");
+
+			$state = $stmt->fetch(PDO::FETCH_ASSOC);
+			$idCountry = $state["id_country"];
+
+			$stmt = DB::getConn()->query("select country.*
+				        from country 
+						where country.id = $idCountry");
+
+			$country = $stmt->fetch(PDO::FETCH_ASSOC);
+
+			$stmt = DB::getConn()->query("select rating.*
+				        from rating 
+						where rating.id_place = $idPlace");
+
+			$temp_ratings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			$ratings = array();
+			foreach ($temp_ratings as $rating) {
+				$idUser = $rating["id_user"];
+				$stmt = DB::getConn()->query("select user.*
+				        from user 
+						where user.id = $idUser");
+
+				$user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+				$rating["user"]=$user;
+				array_push($ratings, $rating);
+			}
+
+			$state["country"] = $country;
+			$city["state"] = $state;
+			$district["city"] = $city;
+			$place["district"] = $district;
+			$place["category"] = $category;
+			if(sizeof($ratings)>0){
+				$place["ratings"] = $ratings;	
+			}
 
 			array_push($places, $place);
 		}
@@ -191,7 +310,7 @@ class Place{
 		return $array_response;
 	}
 	
-	function find($param){
+	/*function find($param){
 		//$conn = DB::getConn();
 		$stmt = DB::getConn()->query("select place.*
         , district.name as name_district
@@ -217,5 +336,113 @@ class Place{
                 country.name like '%$param->query%'");
 		
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
+	}*/
+
+	function find($param){
+		$eath_radius_in_km = 6371;
+		$user_latitude = $param->user_latitude;
+		$user_longitude = $param->user_longitude;
+		$radius_in_km = $param->radius;
+
+		//$conn = DB::getConn();
+		$array_response = array();
+		$stmt = DB::getConn()->query("select place.*, ($eath_radius_in_km *
+			        acos(
+			            cos(radians($user_latitude)) *
+			            cos(radians(latitude)) *
+			            cos(radians($user_longitude) - radians(longitude)) +
+			            sin(radians($user_latitude)) *
+			            sin(radians(LATITUDE))
+			        )) AS distance
+        from place join district on (place.id_district = district.id) 
+					join city on (district.id_city = city.id)
+                    join state on (city.id_state = state.id)
+                    join country on (state.id_country = country.id)
+                    join category on (place.id_category = category.id)
+		where place.name like '%$param->query%' or
+				place.description like '%param->query%' or
+                place.addr like '%$param->query%' or
+                place.name like '%$param->query%' or
+                district.name like '%$param->query%' or
+                city.name like '%$param->query%' or
+                state.name like '%$param->query%' or
+                country.name like '%$param->query%'
+		HAVING distance <= $radius_in_km
+		ORDER BY distance ASC");
+		
+		$tempPlaces = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+		$places = array();
+		foreach ($tempPlaces as $place) {
+			$idPlace = $place["id"];
+			$idDistrict = $place["id_district"];
+			$idCategory = $place["id_category"];
+
+			$stmt = DB::getConn()->query("select category.*
+				        from category 
+						where category.id = $idCategory");
+
+			$category = $stmt->fetch(PDO::FETCH_ASSOC);
+			
+			$stmt = DB::getConn()->query("select district.*
+				        from district 
+						where district.id = $idDistrict");
+
+			$district = $stmt->fetch(PDO::FETCH_ASSOC);
+			$idCity = $district["id_city"];
+
+			$stmt = DB::getConn()->query("select city.*
+				        from city 
+						where city.id = $idCity");
+
+			$city = $stmt->fetch(PDO::FETCH_ASSOC);
+			$idState = $city["id_state"];
+
+			$stmt = DB::getConn()->query("select state.*
+				        from state 
+						where state.id = $idState");
+
+			$state = $stmt->fetch(PDO::FETCH_ASSOC);
+			$idCountry = $state["id_country"];
+
+			$stmt = DB::getConn()->query("select country.*
+				        from country 
+						where country.id = $idCountry");
+
+			$country = $stmt->fetch(PDO::FETCH_ASSOC);
+
+			$stmt = DB::getConn()->query("select rating.*
+				        from rating 
+						where rating.id_place = $idPlace");
+
+			$temp_ratings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			$ratings = array();
+			foreach ($temp_ratings as $rating) {
+				$idUser = $rating["id_user"];
+				$stmt = DB::getConn()->query("select user.*
+				        from user 
+						where user.id = $idUser");
+
+				$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+				$rating["user"]=$user;
+				array_push($ratings, $rating);
+			}
+
+			$state["country"] = $country;
+			$city["state"] = $state;
+			$district["city"] = $city;
+			$place["district"] = $district;
+			$place["category"] = $category;
+			if(sizeof($ratings)>0){
+				$place["ratings"] = $ratings;	
+			}
+			
+			array_push($places, $place);
+		}
+		$array_response["places"] = $places;
+
+		return $array_response;
 	}
 }

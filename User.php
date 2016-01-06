@@ -33,7 +33,11 @@ class User{
 	}
 
 	function login($user){
+		$array_response = array();
 		$stmt = DB::getConn()->query("SELECT id,name,email,picture_profile FROM user WHERE email = '$user->user' and passwd = '$user->passwd'");
-		return $stmt->fetchAll(PDO::FETCH_OBJ);;
+		$user = $stmt->fetch(PDO::FETCH_ASSOC);
+		$array_response["user"] = $user;
+
+		return $array_response;
 	}
 }
