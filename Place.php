@@ -131,7 +131,7 @@ class Place{
 			            cos(radians(latitude)) *
 			            cos(radians($user_longitude) - radians(longitude)) +
 			            sin(radians($user_latitude)) *
-			            sin(radians(LATITUDE))
+			            sin(radians(latitude))
 			        )) AS distance
         from place join category on (place.id_category = category.id)
 		where place.id_category = $param->id_cat
@@ -228,7 +228,7 @@ class Place{
 			            cos(radians(latitude)) *
 			            cos(radians($user_longitude) - radians(longitude)) +
 			            sin(radians($user_latitude)) *
-			            sin(radians(LATITUDE))
+			            sin(radians(latitude))
 			        )) AS distance
         from place join category on (place.id_category = category.id)
 		HAVING distance <= $radius_in_km
