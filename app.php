@@ -119,6 +119,20 @@ $app->post('/user/login', function () {
 	echo json_encode($result);
 });
 
+$app->post('/user/create', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	//$user = json_decode($request->getBody());
+	$user = json_decode($_POST["json"]);
+	$userDAO = new User();
+	$result = $userDAO->insert($user);
+	if(sizeof($result)>0){
+		$result["success"]=true;
+	}else{
+		$result["success"]=false;
+	}
+	echo json_encode($result);
+});
+
 
 $app->post('/favorite/mark', function () {
 	$request = \Slim\Slim::getInstance()->request();
