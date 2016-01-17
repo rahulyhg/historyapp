@@ -288,7 +288,7 @@ class Place{
 				        from user 
 						where user.id = $idUser");
 
-				$user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+				$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				$rating["user"]=$user;
 				array_push($ratings, $rating);
