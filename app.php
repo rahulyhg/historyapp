@@ -133,6 +133,31 @@ $app->post('/user/create', function () {
 	echo json_encode($result);
 });
 
+$app->post('/user/delete', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	//$user = json_decode($request->getBody());
+	$user = json_decode($_POST["json"]);
+	$userDAO = new User();
+	$userDAO->delete($user);
+	$result = array();
+	$result["success"]=true;
+	echo json_encode($result);
+});
+
+$app->post('/user/update', function () {
+	$request = \Slim\Slim::getInstance()->request();
+	//$user = json_decode($request->getBody());
+	$user = json_decode($_POST["json"]);
+	$userDAO = new User();
+	$result = $userDAO->update($user);
+	if(sizeof($result)>0){
+		$result["success"]=true;
+	}else{
+		$result["success"]=false;
+	}
+	echo json_encode($result);
+});
+
 
 $app->post('/favorite/mark', function () {
 	$request = \Slim\Slim::getInstance()->request();
