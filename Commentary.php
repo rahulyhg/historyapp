@@ -56,7 +56,7 @@ class Commentary{
 
 	function listall($commentary){
 		$array_response = array();
-		$stmt = DB::getConn()->query("SELECT `id`,`id_user`,`id_place`,`comment_text`,`date_time` FROM commentary WHERE id_place = '$commentary->id_place' ORDER BY date_time DESC");
+		$stmt = DB::getConn()->query("SELECT `id`,`id_user`,`id_place`,`comment_text`,`date_time` FROM commentary WHERE id_place = '$commentary->id_place'");
 		$temp_commentary = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		$commentaries = array();
